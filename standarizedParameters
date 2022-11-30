@@ -1,0 +1,24 @@
+function () {
+  // Variable definition
+  var event = {{Event}};
+  var ecommerce = {{cdl - ecommerce}}
+  var output = 'ecommerce-event-does-not-apply';
+
+  switch (event) {
+    case 'productDetail':
+      output = ecommerce.detail.products[0].dimension1;
+      break;
+    case 'productClick':
+      output = ecommerce.click.products[0].dimension1;
+      break;
+    case 'addToCart':
+      output = ecommerce.add.products[0].dimension1;
+      break;
+    case 'removeFromCart':
+      output = ecommerce.remove.products[0].dimension1;
+      break;
+    default:
+      output;
+  }
+  return output;
+}

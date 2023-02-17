@@ -1,0 +1,7 @@
+
+dataLayer.push({
+                 'event': 'trackEvent'
+                 'eventCategory’: ‘Banners Servicios‘
+                  'eventAction’: ‘click banner'
+                 'eventLabel’: ‘{nombre del banner}‘
+});

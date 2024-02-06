@@ -1,0 +1,22 @@
+function () {
+  // Variable definition
+  var price = document.querySelector(".price-wrapper").getAttribute("data-price-amount");
+  return price;
+}
+
+
+function () {
+  // Variable definition
+  var price = document.querySelector(".price").textContent;
+  var amount = price.replace(/[^\d,]/g, '');
+  var amountf = parseFloat(amount.replace(',','.'));
+  return amountf;
+}
+
+function () {
+  // Variable definition
+  var price = document.querySelector("tr.grand.totals td.amount span.price").textContent;
+  var amount = price.replace(/[^\d,]/g, '');
+  var amountf = parseFloat(amount.replace(',','.'));
+  return amountf;
+}

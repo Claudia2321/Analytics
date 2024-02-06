@@ -1,0 +1,15 @@
+SELECT 
+        event_date,
+        geo.region,
+        geo.country,
+        count(event_name) as event_count,
+       count(distinct concat(user_pseudo_id,(select value.int_value from unnest(event_params) where key = 'ga_session_id'))) - count(distinct case when (select value.string_value from unnest(event_params) where key = 'session_engaged') = '1' then concat(user_pseudo_id,(select value.int_value from unnest(event_params) where key = 'ga_session_id')) end) as bounces,
+       count(distinct concat(user_pseudo_id,(select value.int_value from unnest(event_params) where key = 'ga_session_id'))) as sessions,
+    count(distinct case when (select value.string_value from unnest(event_params) where key = 'session_engaged') = '1' then concat(user_pseudo_id,(select value.int_value from unnest(event_params) where key = 'ga_session_id')) end) as engaged_sessions
+    FROM `banco-ciudad-389815.analytics_280921610.events_*`
+    WHERE _table_suffix between '20231003' and '20231003'
+        AND event_name = 'page_view' 
+        and (select value.string_value from unnest(event_params) where key = 'page') is not null and (select value.string_value from unnest(event_params) where key = 'page') like '%paqueteTC%'
+    GROUP BY 1,2,3
+    ORDER BY event_count DESC
+   

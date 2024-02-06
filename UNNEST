@@ -1,0 +1,12 @@
+select 
+user_id,
+event_date,
+event_timestamp,
+traffic_source.name,
+traffic_source.medium,
+traffic_source.source,
+(SELECT value.int_value FROM UNNEST(event_params) WHERE key = 'ga_session_id') as session_id
+from `banco-ciudad-389815.analytics_280921610.events_*` 
+WHERE _table_suffix between '20231001' and '20231031'
+AND
+(SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'page') = '{/Banco ciudad / hacete cliente/caja de ahorro/ final }'

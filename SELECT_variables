@@ -1,0 +1,10 @@
+select 
+event_date,
+traffic_source.name,
+traffic_source.medium,
+traffic_source.source,
+collected_traffic_source.manual_content
+from `banco-ciudad-389815.analytics_280921610.events_*` 
+WHERE _table_suffix between '20231227' and '20231228'
+and traffic_source.source like '%prestamo%'
+and collected_traffic_source.manual_content IS NOT NULL

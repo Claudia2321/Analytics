@@ -5,3 +5,9 @@ dataLayer.push({
                   'eventAction’: ‘click banner'
                  'eventLabel’: ‘{nombre del banner}‘
 });
+
+
+dataLayer.push({
+                 'event': 'trackEvent'
+                 'click’: ‘Empezar a jugar‘
+});

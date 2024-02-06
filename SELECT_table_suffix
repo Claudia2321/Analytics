@@ -1,0 +1,8 @@
+SELECT 
+     DISTINCT user_pseudo_id,
+    (select value.string_value from unnest(event_params) where key = 'page') as page,
+ FROM `banco-ciudad-389815.analytics_280921610.events_*`
+ WHERE _table_suffix between '20231002' and '20231002'
+    AND event_name = 'page_view' and  user_pseudo_id = '1434603197.1695862729'
+    and (select value.string_value from unnest(event_params) where key = 'page') is not null and (select value.string_value from unnest(event_params) where key = 'page') like '%paqueteTC%'
+  ORDER BY user_pseudo_id DESC

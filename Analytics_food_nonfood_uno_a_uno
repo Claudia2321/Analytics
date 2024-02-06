@@ -1,0 +1,45 @@
+WITH 
+  tipo_producto AS (
+         SELECT
+      user_pseudo_id,
+      ga_session_id_cm,
+      time,
+      event_name,
+      tipo_producto_cm,
+      row_num
+    FROM (
+      SELECT
+        user_pseudo_id,
+        (SELECT value.int_value FROM UNNEST(event_params) WHERE key = "ga_session_id") ga_session_id_cm,
+        TIMESTAMP_MICROS(event_timestamp) AS time,
+        event_name,
+        (SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'p_site_business_unit') AS tipo_producto_cm,
+        --Llave unica que me hace el conteo de filas
+        ROW_NUMBER() OVER (PARTITION BY user_pseudo_id, (SELECT value.int_value FROM UNNEST(event_params) WHERE key = "ga_session_id"),event_name ORDER BY event_timestamp ASC) AS row_num
+      FROM `gcp-ar-analyticsga4-prod.analytics_295860202.events_*`
+      WHERE 
+        _table_suffix BETWEEN '20240101' AND '20240104'
+        --Elimino view_item_list para que estos no se categorticen
+        AND event_name IN ('session_start','select_item','view_item','add_to_cart','begin_checkout','purchase')
+        ORDER BY user_pseudo_id, time ASC
+    )  
+   WHERE row_num = 1 
+         and tipo_producto_cm IS NOT NULL
+  ),
+variables as (
+      SELECT
+      t1.user_pseudo_id,
+      (SELECT value.int_value FROM UNNEST(event_params) WHERE key = "ga_session_id") ga_session_id,
+      TIMESTAMP_MICROS(event_timestamp) AS time,
+      t1.event_name,
+      (SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'p_site_business_unit') AS tipo_producto,
+      t2.tipo_producto_cm
+    FROM `gcp-ar-analyticsga4-prod.analytics_295860202.events_*` t1
+      LEFT JOIN tipo_producto t2 ON t1.user_pseudo_id = t2.user_pseudo_id and (SELECT value.int_value FROM UNNEST(event_params) WHERE key = "ga_session_id") = t2.ga_session_id_cm
+      WHERE 
+      _table_suffix BETWEEN '20240101' AND '20240104'
+      AND t1.event_name IN ('session_start','view_item_list','select_item','view_item','add_to_cart','begin_checkout','purchase')
+    ORDER BY user_pseudo_id, time ASC
+) select * from variables 
+--where event_name = 'view_item'
+--where user_pseudo_id = '1000071203.1702837957'
